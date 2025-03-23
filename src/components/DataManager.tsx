@@ -21,20 +21,20 @@ export const DataManager = ({ onExport, onImport }: DataManagerProps) => {
     URL.revokeObjectURL(url);
   };
 
-  const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const content = e.target?.result as string;
+    try {
+      const content = await file.text();
       const success = onImport(content);
       setImportError(!success);
       if (success) {
         event.target.value = '';
       }
-    };
-    reader.readAsText(file);
+    } catch {
+      setImportError(true);
+    }
   };
 
   return (

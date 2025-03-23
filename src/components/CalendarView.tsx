@@ -13,9 +13,17 @@ interface CalendarViewProps {
 }
 
 export const CalendarView = ({ confirmedDates, onClose, isOpen }: CalendarViewProps) => {
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState<Date>(new Date());
 
   if (!isOpen) return null;
+
+  // Using any here because react-calendar's Value type is complex and our handler properly checks the type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleDateChange = (value: any) => {
+    if (value instanceof Date) {
+      setCurrentDate(value);
+    }
+  };
 
   const tileContent = ({ date, view }: { date: Date; view: string }) => {
     if (view !== 'month') return null;
@@ -37,6 +45,7 @@ export const CalendarView = ({ confirmedDates, onClose, isOpen }: CalendarViewPr
         <button 
           onClick={onClose}
           className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+          aria-label="Close"
         >
           <XMarkIcon className="w-6 h-6" />
         </button>
@@ -44,10 +53,13 @@ export const CalendarView = ({ confirmedDates, onClose, isOpen }: CalendarViewPr
         <h2 className="text-xl font-medium mb-4 text-center">Your Sobriety Journey</h2>
         
         <Calendar
-          onChange={setCurrentDate as any}
+          onChange={handleDateChange}
           value={currentDate}
           tileContent={tileContent}
           className="border-0 w-full"
+          navigationLabel={({ label }) => (
+            <span aria-label="calendar navigation">{label}</span>
+          )}
           tileClassName={({ date }) => {
             const isConfirmed = confirmedDates.some(confirmedDate => 
               isSameDay(new Date(confirmedDate), date)
