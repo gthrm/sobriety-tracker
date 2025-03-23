@@ -9,14 +9,16 @@ export function MainContent() {
 
   return (
     <main className="min-h-screen bg-white">
-      <div className="max-w-md mx-auto h-screen">
-        <StreakCounter 
-          streak={data.streak} 
-          onConfirm={confirmDay}
-          isConfirmedToday={isConfirmedToday}
-          confirmedDates={data.history}
-        />
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100">
+      <div className="max-w-md mx-auto min-h-screen flex flex-col">
+        <div className="flex-1">
+          <StreakCounter 
+            streak={data.streak} 
+            onConfirm={confirmDay}
+            isConfirmedToday={isConfirmedToday}
+            confirmedDates={data.history}
+          />
+        </div>
+        <div className="py-6 px-4">
           <DataManager
             onExport={exportData}
             onImport={importData}

@@ -38,19 +38,19 @@ export const DataManager = ({ onExport, onImport }: DataManagerProps) => {
   };
 
   return (
-    <div className="flex flex-col space-y-4">
-      <div className="flex gap-3">
+    <div className="flex flex-col items-center space-y-2">
+      <div className="flex gap-8 text-xs">
         <button
           onClick={handleExport}
-          className="flex-1 border-2 border-[#4CB5F9] text-[#4CB5F9] py-3 rounded-2xl text-sm font-medium
-            hover:bg-[#4CB5F9]/5 transition-colors"
+          className="text-[#4CB5F9] underline underline-offset-2 hover:text-[#4CB5F9]/80 
+            transition-colors font-medium"
         >
-          EXPORT DATA
+          Export Data
         </button>
-        <label className="flex-1">
-          <div className="border-2 border-[#4CB5F9] text-[#4CB5F9] py-3 rounded-2xl text-sm font-medium
-            hover:bg-[#4CB5F9]/5 transition-colors text-center cursor-pointer">
-            IMPORT DATA
+        <label>
+          <div className="text-[#4CB5F9] underline underline-offset-2 hover:text-[#4CB5F9]/80 
+            transition-colors font-medium cursor-pointer">
+            Import Data
           </div>
           <input
             type="file"
@@ -61,7 +61,7 @@ export const DataManager = ({ onExport, onImport }: DataManagerProps) => {
         </label>
       </div>
       {importError && (
-        <p className="text-red-500 text-sm text-center">
+        <p className="text-red-500 text-xs">
           Invalid data format. Please try again.
         </p>
       )}
