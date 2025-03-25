@@ -72,6 +72,7 @@ export const CalendarView = ({
             );
             return isConfirmed ? "bg-orange-50" : "";
           }}
+          maxDate={new Date()}
         />
       </div>
     </div>

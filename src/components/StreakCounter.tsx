@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { FireIcon, CalendarIcon } from "@heroicons/react/24/solid";
-import { isSameDay, startOfWeek, addDays, isBefore, format } from "date-fns";
+import { isSameDay, startOfWeek, addDays, isBefore } from "date-fns";
 import { CalendarView } from "./CalendarView";
 
 interface StreakCounterProps {
@@ -25,7 +25,6 @@ export const StreakCounter = ({
 
   const shouldHighlightDay = (dayIndex: number) => {
     const dayDate = addDays(weekStart, dayIndex);
-    const dateStr = format(dayDate, "yyyy-MM-dd");
 
     // If it's today, only highlight if confirmed
     if (isSameDay(dayDate, today)) {
@@ -34,7 +33,7 @@ export const StreakCounter = ({
 
     // If it's a past day, only highlight if it was confirmed
     if (isBefore(dayDate, today)) {
-      return confirmedDates.includes(dateStr);
+      return confirmedDates.some(date => isSameDay(new Date(date), dayDate));
     }
 
     // Future days are never highlighted
