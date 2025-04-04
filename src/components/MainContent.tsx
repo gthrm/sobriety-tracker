@@ -5,7 +5,7 @@ import { DataManager } from "./DataManager";
 import { useSobrietyData } from "@/hooks/useSobrietyData";
 
 export function MainContent() {
-  const { data, confirmDay, exportData, importData, isConfirmedToday } =
+  const { data, confirmDay, cancelConfirmation, toggleDate, exportData, importData, isConfirmedToday } =
     useSobrietyData();
 
   return (
@@ -14,6 +14,8 @@ export function MainContent() {
         <StreakCounter
           streak={data.streak}
           onConfirm={confirmDay}
+          onCancel={cancelConfirmation}
+          onToggleDate={toggleDate}
           isConfirmedToday={isConfirmedToday}
           confirmedDates={data.history}
         />

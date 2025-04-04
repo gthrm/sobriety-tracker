@@ -8,35 +8,36 @@ import { CalendarView } from "./CalendarView";
 interface StreakCounterProps {
   streak: number;
   onConfirm: () => void;
+  onCancel: () => void;
   isConfirmedToday: boolean;
-  confirmedDates: string[]; // Array of ISO date strings that were confirmed
+  confirmedDates: string[];
+  onToggleDate: (date: Date) => void;
 }
 
 export const StreakCounter = ({
   streak,
   onConfirm,
+  onCancel,
   isConfirmedToday,
   confirmedDates,
+  onToggleDate,
 }: StreakCounterProps) => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const weekDays = ["M", "T", "W", "T", "F", "S", "S"];
   const today = new Date();
-  const weekStart = startOfWeek(today, { weekStartsOn: 1 }); // Start from Monday
+  const weekStart = startOfWeek(today, { weekStartsOn: 1 });
 
   const shouldHighlightDay = (dayIndex: number) => {
     const dayDate = addDays(weekStart, dayIndex);
 
-    // If it's today, only highlight if confirmed
     if (isSameDay(dayDate, today)) {
       return isConfirmedToday;
     }
 
-    // If it's a past day, only highlight if it was confirmed
     if (isBefore(dayDate, today)) {
       return confirmedDates.some(date => isSameDay(new Date(date), dayDate));
     }
 
-    // Future days are never highlighted
     return false;
   };
 
@@ -106,15 +107,26 @@ export const StreakCounter = ({
             ))}
           </div>
 
-          {/* Continue button */}
-          <button
-            onClick={onConfirm}
-            disabled={isConfirmedToday}
-            className="w-full bg-[#4CB5F9] text-white py-3.5 rounded-2xl text-sm font-medium
-              disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isConfirmedToday ? "CONFIRMED" : "I AM SOBER TODAY"}
-          </button>
+          {/* Action buttons */}
+          <div className="w-full flex flex-col gap-3">
+            {isConfirmedToday ? (
+              <button
+                onClick={onCancel}
+                className="w-full bg-red-500 text-white py-3.5 rounded-2xl text-sm font-medium
+                  hover:bg-red-600 transition-colors"
+              >
+                CANCEL CONFIRMATION
+              </button>
+            ) : (
+              <button
+                onClick={onConfirm}
+                className="w-full bg-[#4CB5F9] text-white py-3.5 rounded-2xl text-sm font-medium
+                  hover:bg-[#4CB5F9]/90 transition-colors"
+              >
+                I AM SOBER TODAY
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -122,6 +134,7 @@ export const StreakCounter = ({
         isOpen={isCalendarOpen}
         onClose={() => setIsCalendarOpen(false)}
         confirmedDates={confirmedDates}
+        onToggleDate={onToggleDate}
       />
     </>
   );

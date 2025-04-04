@@ -10,12 +10,14 @@ interface CalendarViewProps {
   confirmedDates: string[];
   onClose: () => void;
   isOpen: boolean;
+  onToggleDate: (date: Date) => void;
 }
 
 export const CalendarView = ({
   confirmedDates,
   onClose,
   isOpen,
+  onToggleDate,
 }: CalendarViewProps) => {
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
 
@@ -27,6 +29,10 @@ export const CalendarView = ({
     if (value instanceof Date) {
       setCurrentDate(value);
     }
+  };
+
+  const handleDateClick = (date: Date) => {
+    onToggleDate(date);
   };
 
   const tileContent = ({ date, view }: { date: Date; view: string }) => {
@@ -66,13 +72,15 @@ export const CalendarView = ({
           navigationLabel={({ label }) => (
             <span aria-label="calendar navigation">{label}</span>
           )}
-          tileClassName={({ date }) => {
+          tileClassName={({ date, view }) => {
+            if (view !== "month") return "";
             const isConfirmed = confirmedDates.some((confirmedDate) =>
               isSameDay(new Date(confirmedDate), date)
             );
             return isConfirmed ? "bg-orange-50" : "";
           }}
           maxDate={new Date()}
+          onClickDay={handleDateClick}
         />
       </div>
     </div>
