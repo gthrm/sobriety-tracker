@@ -51,12 +51,12 @@ export const useSobrietyData = () => {
   const calculateStreak = (dates: string[]): number => {
     if (dates.length === 0) return 0;
 
-    // Convert all dates to startOfDay and sort in ascending order (oldest first)
+    // Convert all dates to startOfDay and sort in descending order (newest first)
     const sortedDates = [...dates]
       .map(date => startOfDay(new Date(date)))
-      .sort((a, b) => a.getTime() - b.getTime());
+      .sort((a, b) => b.getTime() - a.getTime());
 
-    console.log('Sorted dates (oldest first):', sortedDates.map(d => format(d, 'yyyy-MM-dd')));
+    console.log('Sorted dates (newest first):', sortedDates.map(d => format(d, 'yyyy-MM-dd')));
 
     // Remove duplicates
     const uniqueDates = sortedDates.filter((date, index, self) =>
@@ -65,26 +65,32 @@ export const useSobrietyData = () => {
 
     console.log('Unique dates:', uniqueDates.map(d => format(d, 'yyyy-MM-dd')));
 
-    let currentStreak = 1;
-
-    for (let i = 1; i < uniqueDates.length; i++) {
-      const prevDate = uniqueDates[i - 1];
-      const currentDate = uniqueDates[i];
-      
-      console.log(`Checking dates: ${format(prevDate, 'yyyy-MM-dd')} and ${format(currentDate, 'yyyy-MM-dd')}`);
-      
-      if (isSameDay(addDays(prevDate, 1), currentDate)) {
-        currentStreak++;
-        console.log(`Current streak: ${currentStreak}`);
-      } else {
-        // Reset streak on gap
-        currentStreak = 1;
-        console.log('Streak reset due to gap');
-      }
+    const today = startOfDay(new Date());
+    const lastDate = uniqueDates[0];
+    
+    // If the last date is not today, streak is 0
+    if (!isSameDay(lastDate, today)) {
+      console.log('Last date is not today, streak is 0');
+      return 0;
     }
 
-    console.log('Final streak:', currentStreak);
-    return currentStreak;
+    let streak = 1;
+    let currentDate = today;
+
+    // Go backwards from today until we find a gap
+    while (true) {
+      const prevDate = addDays(currentDate, -1);
+      const isPrevDateConfirmed = uniqueDates.some(date => isSameDay(date, prevDate));
+      
+      if (!isPrevDateConfirmed) {
+        console.log(`Found gap at ${format(prevDate, 'yyyy-MM-dd')}, streak is ${streak}`);
+        return streak;
+      }
+
+      streak++;
+      currentDate = prevDate;
+      console.log(`Current streak: ${streak}, checking date: ${format(prevDate, 'yyyy-MM-dd')}`);
+    }
   };
 
   const isConfirmedToday = () => {
@@ -130,6 +136,12 @@ export const useSobrietyData = () => {
       streak: newStreak,
       lastConfirmation: todayStr,
     };
+
+    console.log('Confirming day:', {
+      today: format(today, 'yyyy-MM-dd'),
+      newStreak,
+      newHistory: newHistory.map(d => format(new Date(d), 'yyyy-MM-dd'))
+    });
 
     saveData(newData);
   };
